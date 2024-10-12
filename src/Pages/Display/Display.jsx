@@ -1143,20 +1143,37 @@ const Display = ({ filesData, setCombinedData }) => {
     // const testerData2 = Object.values(tester1(combinedData.febrero));
     // console.log(combinedData.enero)
 
-    // Ordenar combinedData por fechaOperacion cronológicamente
-    combinedData.enero.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
-    combinedData.febrero.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
-    combinedData.marzo.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
-    combinedData.abril.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
-    combinedData.mayo.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
-    combinedData.junio.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
-    combinedData.julio.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
-    combinedData.agosto.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
-    combinedData.septiembre.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
-    combinedData.octubre.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
-    combinedData.noviembre.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
-    combinedData.diciembre.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
+    // // Ordenar combinedData por fechaOperacion cronológicamente
+    // combinedData.enero.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
+    // combinedData.febrero.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
+    // combinedData.marzo.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
+    // combinedData.abril.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
+    // combinedData.mayo.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
+    // combinedData.junio.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
+    // combinedData.julio.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
+    // combinedData.agosto.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
+    // combinedData.septiembre.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
+    // combinedData.octubre.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
+    // combinedData.noviembre.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
+    // combinedData.diciembre.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
+    
+    // Función para ordenar cronológicamente por fechaOperacion
+    const ordenarPorFecha = (data) => {
+      return data.sort((a, b) => {
+        const fechaA = new Date(a.fechaOperacion.split('/').reverse().join('/'));
+        const fechaB = new Date(b.fechaOperacion.split('/').reverse().join('/'));
+        return fechaA - fechaB;
+      });
+    };
 
+    // Lista de los meses que hay en combinedData
+    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+    // Ordenar los datos de cada mes cronológicamente
+    meses.forEach(mes => {
+      combinedData[mes] = ordenarPorFecha(combinedData[mes]);
+    });
 
     // Arregla el correlativo
     combinedData.enero.forEach((row, index) => {
