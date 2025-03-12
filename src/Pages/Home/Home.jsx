@@ -91,9 +91,8 @@ const Home = ({ setFilesData }) => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, padding: 10 }}>
-      <Typography variant="h4">Subir Archivos Excel</Typography>
-      <Typography variant="h3">Enero</Typography>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent:"center",  gap: 2, padding: 10 }}>
+      <Typography variant="h5">Subir Archivos Excel</Typography>
       <FormControl fullWidth>
 
         <InputLabel htmlFor="file-upload" >Sube el archivo de COMPRAS de ENERO</InputLabel>

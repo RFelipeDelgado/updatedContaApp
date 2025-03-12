@@ -4,6 +4,7 @@ import Home from './Pages/Home/Home';
 import Display from './Pages/Display/Display';
 import Combined from './Pages/Combined/Combined';
 import FormularioMeses from './Pages/tester/tester';
+import HomeTester from './Pages/Home/HomeTester';
 
 const App = () => {
   const [filesData, setFilesData] = useState([]);
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/display" element={<Display filesData={filesData} setCombinedData={setCombinedData} />} />
         <Route path="/combined" element={<Combined combinedData={combinedData} />} />
         <Route path="/tester" element={<FormularioMeses FormularioMeses ={FormularioMeses } />} />
+        <Route path="/hometester" element={<HomeTester setFilesData={setFilesData} />} />
       </Routes>
     </Router>
   );
