@@ -391,7 +391,9 @@ const Combined = ({ combinedData }) => {
 
             //celdas con los valores de userData
             worksheet.getCell('C4').value = 'PERÍODO';
+            worksheet.getCell('D4').value = year;
             worksheet.getCell('C6').value = 'RUT';
+            worksheet.getCell('D6').value = rutUser;
             worksheet.getCell('C8').value = 'NOMBRE/RAZÓN SOCIAL';
 
             for (let i = 4; i <= 8; i += 2) {

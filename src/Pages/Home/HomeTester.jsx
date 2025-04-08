@@ -1,10 +1,11 @@
 import * as XLSX from 'xlsx';
 import { useNavigate } from 'react-router-dom';
-import { Button, Box, TextField, Typography, InputLabel, FormControl, Accordion, AccordionDetails, AccordionSummary, Grid2, Divider, Input, InputAdornment } from '@mui/material';
+import { Button, Box, TextField, Typography, InputLabel, FormControl, Accordion, AccordionDetails, AccordionSummary, Grid2, Divider, Input, InputAdornment, Autocomplete, Select, MenuItem } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { NumericFormat } from 'react-number-format';
 
 // eslint-disable-next-line react/prop-types
 const HomeTester = ({ setFilesData }) => {
@@ -33,6 +34,20 @@ const HomeTester = ({ setFilesData }) => {
     const [file23, setFile23] = useState(null);
     const [file24, setFile24] = useState(null);
     const navigate = useNavigate();
+
+    const mesesAño = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+    const [inputs, setInputs] = useState(
+        mesesAño.reduce((acc, mes) => ({
+            ...acc,
+            [mes]: { regularInputs: [] },
+
+        }), {})
+    )
+    useEffect(() => {
+        console.log(inputs);
+
+    }, [inputs])
 
     const handleFileChange = (e, setFile) => {
         setFile(e.target.files[0]);
@@ -93,591 +108,384 @@ const HomeTester = ({ setFilesData }) => {
         }
     };
 
+    const setterFiles = [
+        setFile1, setFile2, setFile3, setFile4, setFile5, setFile6,
+        setFile7, setFile8, setFile9, setFile10, setFile11, setFile12,
+        setFile13, setFile14, setFile15, setFile16, setFile17, setFile18,
+        setFile19, setFile20, setFile21, setFile22, setFile23, setFile24
+    ];
+
+    const handleAddInput = (mes) => {
+        setInputs((prevInputs) => ({
+            ...prevInputs,
+            [mes]: {
+                regularInputs: [
+                    ...prevInputs[mes].regularInputs,
+                    { nombre: "", cantidad: 0, fecha: 0, selector: "gasto" }
+                ],
+            },
+        }));
+        console.log(inputs);
+
+    };
+
+    // Update input value directly using index
+    const handleInputChange = (mes, index, value, field) => {
+        let processedValue = value;
+        
+        // Si el campo es "cantidad", elimina símbolos y comas
+        if (field === "cantidad") {
+            processedValue = parseInt(value.replace(/\D/g, "")); // Elimina todo lo que no sea dígito
+        }
+    
+        console.log(parseInt(processedValue)); // Verifica el valor limpio en consola
+    
+        setInputs((prevInputs) => {
+            const updated = [...prevInputs[mes].regularInputs];
+            updated[index] = { ...updated[index], [field]: processedValue };
+            return {
+                ...prevInputs,
+                [mes]: { regularInputs: updated },
+            };
+        });
+    };
+
+    // const selectorOptions2 = ["Si", "No"]
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: "center", gap: 2, padding: 10 }}>
             <Typography variant="h5">Subir Archivos Excel</Typography>
-            <Accordion >
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1-content"
-                    id="panel1-header"
-                >
-                    <EditCalendarIcon sx={{ color: 'orange', mr: 1, my: 0.1 }} />
-                    <Typography component="span">Enero</Typography>
-                </AccordionSummary>
 
-                <AccordionDetails>
+            {mesesAño.map((mes, index) => (
+                <Accordion key={`mes_${index}`}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                    >
+                        <EditCalendarIcon sx={{ color: 'orange', mr: 1, my: 0.1 }} />
+                        <Typography component="span">{mes}</Typography>
+                    </AccordionSummary>
 
-                    <Grid2 container spacing={0}>
+                    <AccordionDetails>
 
-                        <Grid2 size={12} sx={{ m: '0' }}>
-                            <Divider textAlign="center">
-                                <Typography>Seleccionar archivos de Enero de:</Typography>
-                            </Divider>
-                        </Grid2>
+                        <Grid2 container spacing={0}>
+
+                            <Grid2 size={12} sx={{ m: '0' }}>
+                                <Divider textAlign="center">
+                                    <Typography>Seleccionar archivos de {mes} de:</Typography>
+                                </Divider>
+                            </Grid2>
 
 
-                        <Grid2 size={6} textAlign="center">
-                            <InputLabel >Compra</InputLabel>
-                            <TextField
-                                id="file-upload"
-                                type="file"
-                                inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                                onChange={(e) => handleFileChange(e, setFile1)}
-                                sx={{ gap: 2, border: 1, margin: 1, mt: 1 }}
-                                variant="outlined"
-                                margin="normal"
-
-                            />
-                        </Grid2>
-                        <Grid2 size={6} textAlign="center">
-                            <InputLabel>Venta</InputLabel>
-                            <TextField
-                                id="file-upload"
-                                type="file"
-                                inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                                onChange={(e) => handleFileChange(e, setFile2)}
-                                sx={{ gap: 0, border: 1, margin: 0.1, mt: 1 }}
-                                variant="outlined"
-                                margin="normal"
-                            />
-                        </Grid2>
-
-                        <Grid2 size={12} sx={{ m: '1rem' }}>
-                            <Divider textAlign="center">
-                                <Typography>Otros Egresos:</Typography>
-                            </Divider>
-                        </Grid2>
-
-                        {/* Remuneraciones */}
-                        <Grid2 size={12}>
-                            <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: "space-between" }}>
-                                <Typography sx={{width: 200}}>Remuneraciones</Typography>
+                            <Grid2 size={6} textAlign="center">
+                                <InputLabel >Compra</InputLabel>
                                 <TextField
-                                    required
-                                    type='date'
-                                    id={"Enero"}
-                                    label={"Fecha"}
-                                    // onChange={(e) => handleInputChange(month, monthInputIndex, e.target.value)}
+                                    id="file-upload"
+                                    type="file"
+                                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
+                                    onChange={(e) => handleFileChange(e, setterFiles[2 * index])}
+                                    sx={{ gap: 2, border: 1, margin: 1, mt: 1 }}
                                     variant="outlined"
                                     margin="normal"
-                                    InputLabelProps={{
-                                        shrink: true, // Fuerza a que el label esté siempre contraído
-                                      }}
-                                />
-                                <FormControl sx={{ m: 1, width: 220 }} variant="standard">
-                                    <InputLabel htmlFor="standard-adornment-amount">Cantidad</InputLabel>
-                                    <Input
-                                        id="standard-adornment-amount"
-                                        startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                                        thousandSeparator
-                                        valueIsNumericString
-                                    />
-                                </FormControl>
-                            </Box>
-                        </Grid2>
 
-                        {/* Arriendo */}
-                        <Grid2 size={12}>
-                            <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: "space-between" }}>
-                                <Typography sx={{width: 200}}>Arriendo</Typography>
+                                />
+                                <p>{`index: ${index}, mes: ${mes}, valor compra: ${2 * index + 1}, valor venta: ${2 * index + 2}`}</p>
+                            </Grid2>
+                            <Grid2 size={6} textAlign="center">
+                                <InputLabel>Venta</InputLabel>
                                 <TextField
-                                    required
-                                    type='date'
-                                    id={"Enero"}
-                                    label={"Fecha"}
-                                    // onChange={(e) => handleInputChange(month, monthInputIndex, e.target.value)}
+                                    id="file-upload"
+                                    type="file"
+                                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
+                                    onChange={(e) => handleFileChange(e, setterFiles[2 * index + 1])}
+                                    sx={{ gap: 0, border: 1, margin: 0.1, mt: 1 }}
                                     variant="outlined"
                                     margin="normal"
-                                    InputLabelProps={{
-                                        shrink: true, // Fuerza a que el label esté siempre contraído
-                                      }}
                                 />
-                                <FormControl sx={{ m: 1, width: 220 }} variant="standard">
-                                    <InputLabel htmlFor="standard-adornment-amount">Cantidad</InputLabel>
-                                    <Input
-                                        id="standard-adornment-amount"
-                                        startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                            </Grid2>
+
+                            <Grid2 size={12} sx={{ m: '1rem' }}>
+                                <Divider textAlign="center">
+                                    <Typography>Otros:</Typography>
+                                </Divider>
+                            </Grid2>
+
+                            {inputs[mes].regularInputs.map((elem, idx) => (
+                                <Grid2 size={12} key={idx}>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',  // Cambiado de 'safe-center' a 'center' para mejor soporte
+                                        justifyContent: "space-between",
+                                        gap: 2,  // Añade un espacio consistente entre elementos
+                                    }}>
+                                        <TextField
+                                            required
+                                            type='normal'
+                                            id={"Enero"}
+                                            label={"Nombre"}
+                                            variant="outlined"
+                                            sx={{
+                                                flex: 1,
+                                                '& .MuiOutlinedInput-root': { height: 56 } // Altura fija
+                                            }}
+                                            onChange={(e) => handleInputChange(mes, idx, e.target.value, "nombre")}
+                                        />
+                                        <Select
+                                            sx={{
+                                                width: 200,
+                                                height: 56,  // Misma altura que TextField
+                                                marginTop: 1, // Compensa el margen 'normal' de TextField
+                                                marginBottom: 1,
+                                            }}
+                                            onChange={(e) => handleInputChange(mes, idx, e.target.value, "selector")}
+                                            value={inputs[mes]?.regularInputs[idx]?.selector || ""}
+                                        >
+                                            <MenuItem value={"gasto"}>Gasto</MenuItem>
+                                            <MenuItem value={"ingreso"}>Ingreso</MenuItem>
+                                        </Select>
+                                        <TextField
+                                            required
+                                            type='date'
+                                            id={"Enero"}
+                                            label={"Fecha"}
+                                            variant="outlined"
+                                            sx={{
+                                                flex: 1,
+                                                '& .MuiOutlinedInput-root': { height: 56 } // Altura fija
+                                            }}
+                                            value={inputs[mes]?.regularInputs[idx]?.fecha || ""}
+                                            onChange={(e) => handleInputChange(mes, idx, e.target.value, "fecha")}
+                                            InputLabelProps={{ shrink: true }}
+                                        />
+                                        <FormControl sx={{
+                                            m: 1,
+                                            width: 220,
+                                            '& .MuiInput-root': { height: 56 } // Altura consistente
+                                        }} variant="standard">
+                                            <NumericFormat
+                                                value={inputs[mes]?.regularInputs[idx]?.cantidad || ""}
+                                                onChange={(e) => handleInputChange(mes, idx, e.target.value, "cantidad")}
+                                                customInput={TextField}
+                                                thousandSeparator
+                                                valueIsNumericString
+                                                prefix="$"
+                                                variant="standard"
+                                                label="react-number-format"
+                                            />
+                                        </FormControl>
+                                    </Box>
+                                </Grid2>
+                            ))}
+
+                            <Button onClick={() => handleAddInput(mes)}>Agregar otro</Button>
+
+                            {/* <Grid2 size={12}>
+                                <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: "space-between" }}>
+                                    <Typography sx={{ width: 200 }}>Remuneraciones</Typography>
+                                    <TextField
+                                        required
+                                        type='date'
+                                        id={"Enero"}
+                                        label={"Fecha"}
+                                        variant="outlined"
+                                        margin="normal"
+                                        InputLabelProps={{
+                                            shrink: true, // Fuerza a que el label esté siempre contraído
+                                        }}
                                     />
-                                </FormControl>
-                            </Box>
-                        </Grid2>
-                        {/* Impuestos */}
-                        <Grid2 size={12}>
-                            <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: "space-between" }}>
-                                <Typography sx={{width: 200}}>Impuestos</Typography>
-                                <TextField
-                                    required
-                                    type='date'
-                                    id={"Enero"}
-                                    label={"Fecha"}
-                                    // onChange={(e) => handleInputChange(month, monthInputIndex, e.target.value)}
-                                    variant="outlined"
-                                    margin="normal"
-                                    InputLabelProps={{
-                                        shrink: true, // Fuerza a que el label esté siempre contraído
-                                      }}
-                                />
-                                <FormControl sx={{ m: 1, width: 220 }} variant="standard">
-                                    <InputLabel htmlFor="standard-adornment-amount">Cantidad</InputLabel>
-                                    <Input
-                                        id="standard-adornment-amount"
-                                        startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                    <FormControl sx={{ m: 1, width: 220 }} variant="standard">
+                                        <InputLabel htmlFor="standard-adornment-amount">Cantidad</InputLabel>
+                                        <Input
+                                            id="standard-adornment-amount"
+                                            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                            thousandSeparator
+                                            valueIsNumericString
+                                            onChange={(e) => handleInputChange(mes, 0, e.target.value, "Remuneraciones")}
+
+                                        />
+                                    </FormControl>
+                                </Box>
+                            </Grid2> */}
+
+                            {/* <Grid2 size={12}>
+                                <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: "space-between" }}>
+                                    <Typography sx={{ width: 200 }}>Arriendo</Typography>
+                                    <TextField
+                                        required
+                                        type='date'
+                                        id={"Enero"}
+                                        label={"Fecha"}
+                                        variant="outlined"
+                                        margin="normal"
+                                        InputLabelProps={{
+                                            shrink: true, // Fuerza a que el label esté siempre contraído
+                                        }}
                                     />
-                                </FormControl>
-                            </Box>
-                        </Grid2>
-                        {/* Comisiones */}
-                        <Grid2 size={12}>
-                            <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: "space-between" }}>
-                                <Typography sx={{width: 200}}>Comisiones</Typography>
-                                <TextField
-                                    required
-                                    type='date'
-                                    id={"Enero"}
-                                    label={"Fecha"}
-                                    // onChange={(e) => handleInputChange(month, monthInputIndex, e.target.value)}
-                                    variant="outlined"
-                                    margin="normal"
-                                    InputLabelProps={{
-                                        shrink: true, // Fuerza a que el label esté siempre contraído
-                                      }}
-                                />
-                                <FormControl sx={{ m: 1, width: 220 }} variant="standard">
-                                    <InputLabel htmlFor="standard-adornment-amount">Cantidad</InputLabel>
-                                    <Input
-                                        id="standard-adornment-amount"
-                                        startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                    <FormControl sx={{ m: 1, width: 220 }} variant="standard">
+                                        <InputLabel htmlFor="standard-adornment-amount">Cantidad</InputLabel>
+                                        <Input
+                                            id="standard-adornment-amount"
+                                            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                            onChange={(e) => handleInputChange(mes, 1, e.target.value)}
+
+                                        />
+                                    </FormControl>
+                                </Box>
+                            </Grid2>
+
+                            <Grid2 size={12}>
+                                <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: "space-between" }}>
+                                    <Typography sx={{ width: 200 }}>Impuestos</Typography>
+                                    <TextField
+                                        required
+                                        type='date'
+                                        id={"Enero"}
+                                        label={"Fecha"}
+                                        variant="outlined"
+                                        margin="normal"
+                                        InputLabelProps={{
+                                            shrink: true, // Fuerza a que el label esté siempre contraído
+                                        }}
                                     />
-                                </FormControl>
-                            </Box>
-                        </Grid2>
-                        {/* Prestamos */}
-                        <Grid2 size={12}>
-                            <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: "space-between" }}>
-                                <Typography sx={{width: 200}}>Prestamos</Typography>
-                                <TextField
-                                    required
-                                    type='date'
-                                    id={"Enero"}
-                                    label={"Fecha"}
-                                    // onChange={(e) => handleInputChange(month, monthInputIndex, e.target.value)}
-                                    variant="outlined"
-                                    margin="normal"
-                                    InputLabelProps={{
-                                        shrink: true, // Fuerza a que el label esté siempre contraído
-                                      }}
-                                />
-                                <FormControl sx={{ m: 1, width: 220 }} variant="standard">
-                                    <InputLabel htmlFor="standard-adornment-amount">Cantidad</InputLabel>
-                                    <Input
-                                        id="standard-adornment-amount"
-                                        startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                    <FormControl sx={{ m: 1, width: 220 }} variant="standard">
+                                        <InputLabel htmlFor="standard-adornment-amount">Cantidad</InputLabel>
+                                        <Input
+                                            id="standard-adornment-amount"
+                                            onChange={(e) => handleInputChange(mes, 2, e.target.value)}
+
+                                            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                        />
+                                    </FormControl>
+                                </Box>
+                            </Grid2>
+
+                            <Grid2 size={12}>
+                                <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: "space-between" }}>
+                                    <Typography sx={{ width: 200 }}>Comisiones</Typography>
+                                    <TextField
+                                        required
+                                        type='date'
+                                        id={"Enero"}
+                                        label={"Fecha"}
+                                        variant="outlined"
+                                        margin="normal"
+                                        InputLabelProps={{
+                                            shrink: true, // Fuerza a que el label esté siempre contraído
+                                        }}
                                     />
-                                </FormControl>
-                            </Box>
-                        </Grid2>
-                        {/* Imposiciones */}
-                        <Grid2 size={12}>
-                            <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: "space-between" }}>
-                                <Typography sx={{width: 200}}>Imposiciones</Typography>
-                                <TextField
-                                    required
-                                    type='date'
-                                    id={"Enero"}
-                                    label={"Fecha"}
-                                    // onChange={(e) => handleInputChange(month, monthInputIndex, e.target.value)}
-                                    variant="outlined"
-                                    margin="normal"
-                                    InputLabelProps={{
-                                        shrink: true, // Fuerza a que el label esté siempre contraído
-                                      }}
-                                />
-                                <FormControl sx={{ m: 1, width: 220 }} variant="standard">
-                                    <InputLabel htmlFor="standard-adornment-amount">Cantidad</InputLabel>
-                                    <Input
-                                        id="standard-adornment-amount"
-                                        startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                    <FormControl sx={{ m: 1, width: 220 }} variant="standard">
+                                        <InputLabel htmlFor="standard-adornment-amount">Cantidad</InputLabel>
+                                        <Input
+                                            id="standard-adornment-amount"
+                                            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                            onChange={(e) => handleInputChange(mes, 3, e.target.value)}
+
+                                        />
+                                    </FormControl>
+                                </Box>
+                            </Grid2>
+
+                            <Grid2 size={12}>
+                                <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: "space-between" }}>
+                                    <Typography sx={{ width: 200 }}>Imposiciones</Typography>
+                                    <TextField
+                                        required
+                                        type='date'
+                                        id={"Enero"}
+                                        label={"Fecha"}
+                                        variant="outlined"
+                                        margin="normal"
+                                        InputLabelProps={{
+                                            shrink: true, // Fuerza a que el label esté siempre contraído
+                                        }}
                                     />
-                                </FormControl>
-                            </Box>
-                        </Grid2>
-                        {/* Prestamos bancarios */}
-                        <Grid2 size={12}>
-                            <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: "space-between" }}>
-                                <Typography sx={{width: 200}}>Prestamo bancario</Typography>
-                                <TextField
-                                    required
-                                    type='date'
-                                    id={"Enero"}
-                                    label={"Fecha"}
-                                    // onChange={(e) => handleInputChange(month, monthInputIndex, e.target.value)}
-                                    variant="outlined"
-                                    margin="normal"
-                                    InputLabelProps={{
-                                        shrink: true, // Fuerza a que el label esté siempre contraído
-                                      }}
-                                />
-                                <FormControl sx={{ m: 1, width: 220 }} variant="standard">
-                                    <InputLabel htmlFor="standard-adornment-amount">Cantidad</InputLabel>
-                                    <Input
-                                        id="standard-adornment-amount"
-                                        startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                    <FormControl sx={{ m: 1, width: 220 }} variant="standard">
+                                        <InputLabel htmlFor="standard-adornment-amount">Cantidad</InputLabel>
+                                        <Input
+                                            id="standard-adornment-amount"
+                                            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                            onChange={(e) => handleInputChange(mes, 4, e.target.value)}
+
+                                        />
+                                    </FormControl>
+                                </Box>
+                            </Grid2>
+
+                            <Grid2 size={12}>
+                                <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: "space-between" }}>
+                                    <Typography sx={{ width: 200 }}>Prestamo bancario</Typography>
+                                    <TextField
+                                        required
+                                        type='date'
+                                        id={"Enero"}
+                                        label={"Fecha"}
+                                        variant="outlined"
+                                        margin="normal"
+                                        InputLabelProps={{
+                                            shrink: true, // Fuerza a que el label esté siempre contraído
+                                        }}
                                     />
-                                </FormControl>
-                            </Box>
+                                    <FormControl sx={{ m: 1, width: 220 }} variant="standard">
+                                        <InputLabel htmlFor="standard-adornment-amount">Cantidad</InputLabel>
+                                        <Input
+                                            id="standard-adornment-amount"
+                                            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                            onChange={(e) => handleInputChange(mes, 5, e.target.value)}
+
+                                        />
+                                    </FormControl>
+                                </Box>
+                            </Grid2>
+
+                            <Grid2 size={12} sx={{ m: '1rem' }}>
+                                <Divider textAlign="center">
+                                    <Typography>Ingresos:</Typography>
+                                </Divider>
+                            </Grid2>
+
+                            <Grid2 size={12}>
+                                <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: "space-between" }}>
+                                    <Typography sx={{ width: 200 }}>Otros ingresos</Typography>
+                                    <TextField
+                                        required
+                                        type='date'
+                                        id={"Enero"}
+                                        label={"Fecha"}
+                                        variant="outlined"
+                                        margin="normal"
+                                        InputLabelProps={{
+                                            shrink: true, // Fuerza a que el label esté siempre contraído
+                                        }}
+                                    />
+                                    <TextField
+                                        required
+                                        type='normal'
+                                        id={"Enero"}
+                                        label={"Glosa"}
+                                        onChange={(e) => handleInputChange(mes, 6, e.target.value)}
+                                        variant="outlined"
+                                        margin="normal"
+                                    />
+                                    <FormControl sx={{ m: 1, width: 220 }} variant="standard">
+                                        <InputLabel htmlFor="standard-adornment-amount">Cantidad</InputLabel>
+                                        <Input
+                                            id="standard-adornment-amount"
+                                            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                            onChange={(e) => handleInputChange(mes, 7, e.target.value)}
+
+                                        />
+                                    </FormControl>
+                                </Box>
+                            </Grid2> */}
+
                         </Grid2>
 
-                        <Grid2 size={12} sx={{ m: '1rem' }}>
-                            <Divider textAlign="center">
-                                <Typography>Ingresos:</Typography>
-                            </Divider>
-                        </Grid2>
-
-                        {/* Ingreso 1 */}
-                        <Grid2 size={12}>
-                            <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: "space-between" }}>
-                                <Typography sx={{width: 200}}>Otros ingresos</Typography>
-                                <TextField
-                                    required
-                                    type='date'
-                                    id={"Enero"}
-                                    label={"Fecha"}
-                                    // onChange={(e) => handleInputChange(month, monthInputIndex, e.target.value)}
-                                    variant="outlined"
-                                    margin="normal"
-                                    InputLabelProps={{
-                                        shrink: true, // Fuerza a que el label esté siempre contraído
-                                      }}
-                                />
-                                <FormControl sx={{ m: 1, width: 220 }} variant="standard">
-                                    <InputLabel htmlFor="standard-adornment-amount">Cantidad</InputLabel>
-                                    <Input
-                                        id="standard-adornment-amount"
-                                        startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                                    />
-                                </FormControl>
-                            </Box>
-                        </Grid2>
-
-                    </Grid2>
-
-                </AccordionDetails>
-            </Accordion>
-            <FormControl fullWidth>
+                    </AccordionDetails>
+                </Accordion>
+            ))}
 
 
-                {/* <InputLabel htmlFor="file-upload" >Sube el archivo de COMPRAS de ENERO</InputLabel> */}
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile1)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de VENTAS de ENERO</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile2)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de COMPRAS de FEBRERO</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile3)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de VENTAS de FEBRERO</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile4)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de COMPRAS de MARZO</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile5)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de VENTAS de MARZO</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile6)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de COMPRAS de ABRIL</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile7)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de VENTAS de ABRIL</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile8)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de COMPRAS de MAYO</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile9)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de VENTAS de MAYO</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile10)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de COMPRAS de JUNIO</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile11)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de VENTAS de JUNIO</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile12)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de COMPRAS de JULIO</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile13)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de VENTAS de JULIO</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile14)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de COMPRAS de AGOSTO</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile15)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de VENTAS de AGOSTO</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile16)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de COMPRAS de SEPTIEMBRE</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile17)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de VENTAS de SEPTIEMBRE</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile18)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de COMPRAS de OCTUBRE</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile19)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de VENTAS de OCTUBRE</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile20)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de COMPRAS de NOVIEMBRE</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile21)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de VENTAS de NOVIEMBRE</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile22)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de COMPRAS de DICIEMBRE</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile23)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
-            <FormControl fullWidth>
-                <InputLabel htmlFor="file-upload" >Sube el archivo de VENTAS de DICIEMBRE</InputLabel>
-                <TextField
-                    id="file-upload"
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={(e) => handleFileChange(e, setFile24)}
-                    sx={{ gap: 2, border: 1, margin: 1, mt: 5 }}
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                />
-            </FormControl>
             <Button variant="contained" color="primary" onClick={handleProcessFiles}>Procesar archivos</Button>
         </Box>
     );
