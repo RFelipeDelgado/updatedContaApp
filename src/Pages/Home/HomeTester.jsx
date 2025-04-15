@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 
 // eslint-disable-next-line react/prop-types
-const HomeTester = ({ setFilesData }) => {
+const HomeTester = ({ setFilesData, setRegularInputs }) => {
     const [file1, setFile1] = useState(null);
     const [file2, setFile2] = useState(null);
     const [file3, setFile3] = useState(null);
@@ -35,7 +35,7 @@ const HomeTester = ({ setFilesData }) => {
     const [file24, setFile24] = useState(null);
     const navigate = useNavigate();
 
-    const mesesAño = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    const mesesAño = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 
     const [inputs, setInputs] = useState(
         mesesAño.reduce((acc, mes) => ({
@@ -101,7 +101,7 @@ const HomeTester = ({ setFilesData }) => {
                 readFile(file23),
                 readFile(file24)]);
             setFilesData([data1, data2, data3, data4, data5, data6, data7, data8, data9, data10, data11, data12, data13, data14, data15, data16, data17, data18, data19, data20, data21, data22, data23, data24]);
-
+            setRegularInputs(inputs)
             navigate('/display');
         } catch (error) {
             console.error('Error reading files:', error);

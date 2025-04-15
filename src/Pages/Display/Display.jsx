@@ -3,16 +3,8 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Button, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-const Display = ({ filesData, setCombinedData }) => {
+const Display = ({ filesData, setCombinedData, regularInputs }) => {
   const navigate = useNavigate();
-
-  const generateColumns = (data) => {
-    return data[0].map((header, index) => ({
-      field: `column${index}`,
-      headerName: header,
-      width: 150,
-    }));
-  };
 
   const isValidDate = (date) => {
     return date instanceof Date && !isNaN(date);
@@ -55,6 +47,75 @@ const Display = ({ filesData, setCombinedData }) => {
 
     return date;
   };
+
+  const formatNumber = (number) => {
+    return new Intl.NumberFormat('de-DE').format(number);
+  };
+
+  // Lista de los meses que hay en combinedData
+  const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+  // Objeto para almacenar temporalmente los datos procesados
+  const processedRegularInputs = {};
+
+  meses.forEach(mes => {
+    // Inicializamos el array para este mes
+    processedRegularInputs[mes] = [];
+
+    // Obtenemos los inputs del mes actual
+    const inputsDelMes = regularInputs[mes]?.regularInputs || [];
+    console.log(inputsDelMes);
+
+    // Procesamos cada input
+    inputsDelMes.forEach((input, index) => {
+      const isIngreso = input.selector === 'ingreso';
+      const isGasto = input.selector === 'gasto';
+
+
+      const formattedDate = formatDate(input.fecha);
+
+      const combinedRowInputs = {
+        correlativo: processedRegularInputs[mes].length + 1,
+        tipoOperacion: isIngreso ? "1" : "2",
+        folio: '',
+        tipoDocumento: '',
+        rutEmisor: '',
+        fechaOperacion: formattedDate,
+        montoNeto: isIngreso ? input.cantidad : 0,
+        iva: 0,
+        montoOperacionesExentas: 0,
+        montoTotal: input.cantidad,
+        montoTotalCompras: isGasto ? input.cantidad : 0,
+        montoTotalVentas: isIngreso ? input.cantidad : 0,
+        montoPercibido: input.cantidad,
+        glosaOperacion: input.nombre,
+        operacionEntidadRelacionada: '',
+        percepcionOperacionDevengada: '',
+        operacionPagoPlazo: '',
+        fechaExigibilidadPago: formattedDate,
+        montoIngreso: isIngreso ? formatNumber(input.cantidad) : '',
+        montoEgreso: isGasto ? formatNumber(input.cantidad) : '',
+        saldo: ''
+      };
+
+      processedRegularInputs[mes].push(combinedRowInputs);
+    });
+  });
+
+  console.log(regularInputs);
+  console.log(filesData);
+  console.log(processedRegularInputs.enero);
+
+  const generateColumns = (data) => {
+    return data[0].map((header, index) => ({
+      field: `column${index}`,
+      headerName: header,
+      width: 150,
+    }));
+  };
+
+
 
   const generateRows = (data) => {
     return data.slice(1)
@@ -149,9 +210,7 @@ const Display = ({ filesData, setCombinedData }) => {
 
 
 
-  const formatNumber = (number) => {
-    return new Intl.NumberFormat('de-DE').format(number);
-  };
+
 
 
 
@@ -251,8 +310,12 @@ const Display = ({ filesData, setCombinedData }) => {
           saldo: ''
         };
         combinedData.enero.push(combinedRow);
+
+
       });
     });
+    processedRegularInputs.enero.map((input) => combinedData.enero.push(input));
+    
 
     filesData.slice(2, 4).forEach((data, fileIndex) => {
       data.slice(1).forEach((row) => {
@@ -333,6 +396,8 @@ const Display = ({ filesData, setCombinedData }) => {
         combinedData.febrero.push(combinedRow);
       });
     });
+    processedRegularInputs.febrero.map((input) => combinedData.febrero.push(input));
+
 
     filesData.slice(4, 6).forEach((data, fileIndex) => {
       data.slice(1).forEach((row) => {
@@ -411,6 +476,8 @@ const Display = ({ filesData, setCombinedData }) => {
         combinedData.marzo.push(combinedRow);
       });
     });
+    processedRegularInputs.marzo.map((input) => combinedData.marzo.push(input));
+
 
     filesData.slice(6, 8).forEach((data, fileIndex) => {
       data.slice(1).forEach((row) => {
@@ -489,6 +556,8 @@ const Display = ({ filesData, setCombinedData }) => {
         combinedData.abril.push(combinedRow);
       });
     });
+    processedRegularInputs.abril.map((input) => combinedData.abril.push(input));
+
 
     filesData.slice(8, 10).forEach((data, fileIndex) => {
       data.slice(1).forEach((row) => {
@@ -567,6 +636,8 @@ const Display = ({ filesData, setCombinedData }) => {
         combinedData.mayo.push(combinedRow);
       });
     });
+    processedRegularInputs.mayo.map((input) => combinedData.mayo.push(input));
+
 
     filesData.slice(10, 12).forEach((data, fileIndex) => {
       data.slice(1).forEach((row) => {
@@ -645,6 +716,8 @@ const Display = ({ filesData, setCombinedData }) => {
         combinedData.junio.push(combinedRow);
       });
     });
+    processedRegularInputs.junio.map((input) => combinedData.junio.push(input));
+
 
     filesData.slice(12, 14).forEach((data, fileIndex) => {
       data.slice(1).forEach((row) => {
@@ -723,6 +796,8 @@ const Display = ({ filesData, setCombinedData }) => {
         combinedData.julio.push(combinedRow);
       });
     });
+    processedRegularInputs.julio.map((input) => combinedData.julio.push(input));
+
 
     filesData.slice(14, 16).forEach((data, fileIndex) => {
       data.slice(1).forEach((row) => {
@@ -801,6 +876,8 @@ const Display = ({ filesData, setCombinedData }) => {
         combinedData.agosto.push(combinedRow);
       });
     });
+    processedRegularInputs.agosto.map((input) => combinedData.agosto.push(input));
+
 
     filesData.slice(16, 18).forEach((data, fileIndex) => {
       data.slice(1).forEach((row) => {
@@ -879,6 +956,8 @@ const Display = ({ filesData, setCombinedData }) => {
         combinedData.septiembre.push(combinedRow);
       });
     });
+    processedRegularInputs.septiembre.map((input) => combinedData.septiembre.push(input));
+
 
     filesData.slice(18, 20).forEach((data, fileIndex) => {
       data.slice(1).forEach((row) => {
@@ -957,6 +1036,8 @@ const Display = ({ filesData, setCombinedData }) => {
         combinedData.octubre.push(combinedRow);
       });
     });
+    processedRegularInputs.octubre.map((input) => combinedData.octubre.push(input));
+
 
     filesData.slice(20, 22).forEach((data, fileIndex) => {
       data.slice(1).forEach((row) => {
@@ -1035,6 +1116,8 @@ const Display = ({ filesData, setCombinedData }) => {
         combinedData.noviembre.push(combinedRow);
       });
     });
+    processedRegularInputs.noviembre.map((input) => combinedData.noviembre.push(input));
+
 
     filesData.slice(22, 24).forEach((data, fileIndex) => {
       data.slice(1).forEach((row) => {
@@ -1113,6 +1196,8 @@ const Display = ({ filesData, setCombinedData }) => {
         combinedData.diciembre.push(combinedRow);
       });
     });
+    processedRegularInputs.diciembre.map((input) => combinedData.diciembre.push(input));
+
 
     const tester1 = (data) => {
       return data.reduce((acc, item) => {
@@ -1156,7 +1241,7 @@ const Display = ({ filesData, setCombinedData }) => {
     // combinedData.octubre.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
     // combinedData.noviembre.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
     // combinedData.diciembre.sort((a, b) => new Date(a.fechaOperacion.split('/').reverse().join('/')) / new Date(b.fechaOperacion.split('/').reverse().join('/')));
-    
+
     // Función para ordenar cronológicamente por fechaOperacion
     const ordenarPorFecha = (data) => {
       return data.sort((a, b) => {
@@ -1166,9 +1251,7 @@ const Display = ({ filesData, setCombinedData }) => {
       });
     };
 
-    // Lista de los meses que hay en combinedData
-    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
 
     // Ordenar los datos de cada mes cronológicamente
     meses.forEach(mes => {
