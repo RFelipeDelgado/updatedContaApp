@@ -269,6 +269,12 @@ const Display = ({ filesData, setCombinedData, regularInputs }) => {
           tipoDocumento = 'FACTURA EXENTA';
         } else if (tipoDocumento === 61) {
           tipoDocumento = 'NOTA CREDITO';
+          if (tipoOperacion1o2 === "1") {
+            tipoOperacion1o2 = "2"
+          }
+          else if (tipoOperacion1o2 === "2") {
+            tipoOperacion1o2 = "1"
+          }
         }
 
         let montoTotalCompras = row[data[0].indexOf('Monto Total')] || 0;
@@ -351,6 +357,12 @@ const Display = ({ filesData, setCombinedData, regularInputs }) => {
           tipoDocumento = 'FACTURA EXENTA';
         } else if (tipoDocumento === 61) {
           tipoDocumento = 'NOTA CREDITO';
+          if (tipoOperacion1o2 === "1") {
+            tipoOperacion1o2 = "2"
+          }
+          else if (tipoOperacion1o2 === "2") {
+            tipoOperacion1o2 = "1"
+          }
         }
 
         let montoTotalCompras = row[data[0].indexOf('Monto Total')] || 0;
@@ -433,6 +445,12 @@ const Display = ({ filesData, setCombinedData, regularInputs }) => {
           tipoDocumento = 'FACTURA EXENTA';
         } else if (tipoDocumento === 61) {
           tipoDocumento = 'NOTA CREDITO';
+          if (tipoOperacion1o2 === "1") {
+            tipoOperacion1o2 = "2"
+          }
+          else if (tipoOperacion1o2 === "2") {
+            tipoOperacion1o2 = "1"
+          }
         }
 
         let montoTotalCompras = row[data[0].indexOf('Monto Total')] || 0;
@@ -513,6 +531,12 @@ const Display = ({ filesData, setCombinedData, regularInputs }) => {
           tipoDocumento = 'FACTURA EXENTA';
         } else if (tipoDocumento === 61) {
           tipoDocumento = 'NOTA CREDITO';
+          if (tipoOperacion1o2 === "1") {
+            tipoOperacion1o2 = "2"
+          }
+          else if (tipoOperacion1o2 === "2") {
+            tipoOperacion1o2 = "1"
+          }
         }
 
         let montoTotalCompras = row[data[0].indexOf('Monto Total')] || 0;
@@ -593,6 +617,12 @@ const Display = ({ filesData, setCombinedData, regularInputs }) => {
           tipoDocumento = 'FACTURA EXENTA';
         } else if (tipoDocumento === 61) {
           tipoDocumento = 'NOTA CREDITO';
+          if (tipoOperacion1o2 === "1") {
+            tipoOperacion1o2 = "2"
+          }
+          else if (tipoOperacion1o2 === "2") {
+            tipoOperacion1o2 = "1"
+          }
         }
 
         let montoTotalCompras = row[data[0].indexOf('Monto Total')] || 0;
@@ -673,6 +703,12 @@ const Display = ({ filesData, setCombinedData, regularInputs }) => {
           tipoDocumento = 'FACTURA EXENTA';
         } else if (tipoDocumento === 61) {
           tipoDocumento = 'NOTA CREDITO';
+          if (tipoOperacion1o2 === "1") {
+            tipoOperacion1o2 = "2"
+          }
+          else if (tipoOperacion1o2 === "2") {
+            tipoOperacion1o2 = "1"
+          }
         }
 
         let montoTotalCompras = row[data[0].indexOf('Monto Total')] || 0;
@@ -753,6 +789,12 @@ const Display = ({ filesData, setCombinedData, regularInputs }) => {
           tipoDocumento = 'FACTURA EXENTA';
         } else if (tipoDocumento === 61) {
           tipoDocumento = 'NOTA CREDITO';
+          if (tipoOperacion1o2 === "1") {
+            tipoOperacion1o2 = "2"
+          }
+          else if (tipoOperacion1o2 === "2") {
+            tipoOperacion1o2 = "1"
+          }
         }
 
         let montoTotalCompras = row[data[0].indexOf('Monto Total')] || 0;
@@ -833,6 +875,12 @@ const Display = ({ filesData, setCombinedData, regularInputs }) => {
           tipoDocumento = 'FACTURA EXENTA';
         } else if (tipoDocumento === 61) {
           tipoDocumento = 'NOTA CREDITO';
+          if (tipoOperacion1o2 === "1") {
+            tipoOperacion1o2 = "2"
+          }
+          else if (tipoOperacion1o2 === "2") {
+            tipoOperacion1o2 = "1"
+          }
         }
 
         let montoTotalCompras = row[data[0].indexOf('Monto Total')] || 0;
@@ -913,6 +961,12 @@ const Display = ({ filesData, setCombinedData, regularInputs }) => {
           tipoDocumento = 'FACTURA EXENTA';
         } else if (tipoDocumento === 61) {
           tipoDocumento = 'NOTA CREDITO';
+          if (tipoOperacion1o2 === "1") {
+            tipoOperacion1o2 = "2"
+          }
+          else if (tipoOperacion1o2 === "2") {
+            tipoOperacion1o2 = "1"
+          }
         }
 
         let montoTotalCompras = row[data[0].indexOf('Monto Total')] || 0;
@@ -993,6 +1047,12 @@ const Display = ({ filesData, setCombinedData, regularInputs }) => {
           tipoDocumento = 'FACTURA EXENTA';
         } else if (tipoDocumento === 61) {
           tipoDocumento = 'NOTA CREDITO';
+          if (tipoOperacion1o2 === "1") {
+            tipoOperacion1o2 = "2"
+          }
+          else if (tipoOperacion1o2 === "2") {
+            tipoOperacion1o2 = "1"
+          }
         }
 
         let montoTotalCompras = row[data[0].indexOf('Monto Total')] || 0;
@@ -1073,6 +1133,12 @@ const Display = ({ filesData, setCombinedData, regularInputs }) => {
           tipoDocumento = 'FACTURA EXENTA';
         } else if (tipoDocumento === 61) {
           tipoDocumento = 'NOTA CREDITO';
+          if (tipoOperacion1o2 === "1") {
+            tipoOperacion1o2 = "2"
+          }
+          else if (tipoOperacion1o2 === "2") {
+            tipoOperacion1o2 = "1"
+          }
         }
 
         let montoTotalCompras = row[data[0].indexOf('Monto Total')] || 0;
@@ -1153,6 +1219,12 @@ const Display = ({ filesData, setCombinedData, regularInputs }) => {
           tipoDocumento = 'FACTURA EXENTA';
         } else if (tipoDocumento === 61) {
           tipoDocumento = 'NOTA CREDITO';
+          if (tipoOperacion1o2 === "1") {
+            tipoOperacion1o2 = "2"
+          }
+          else if (tipoOperacion1o2 === "2") {
+            tipoOperacion1o2 = "1"
+          }
         }
 
         let montoTotalCompras = row[data[0].indexOf('Monto Total')] || 0;

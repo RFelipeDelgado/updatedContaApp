@@ -231,8 +231,8 @@ const Combined = ({ combinedData }) => {
             //     ws_data.push([]);
             //   }
 
-            ws_data.push(columns.map(col => col.headerName));
-
+            // ws_data.push(columns.map(col => col.headerName));
+            ws_data.push(new Array(columns.length).fill(''));
             // Filtra los arrays y da formato a las fechas de los sets de datos por mes
             const filteredDataArray1 = eneroSetRows.filter(row => Object.values(row).some(cell => cell !== null && cell !== ''))
                 .map((row, index) => ({
@@ -538,28 +538,37 @@ const Combined = ({ combinedData }) => {
                             return Number(row['montoTotalVentas']).toLocaleString('es-CL', { minimumFractionDigits: 0 });
                         } else if (col.field === 'montoEgreso') {
                             return Number(row['montoTotalCompras']).toLocaleString('es-CL', { minimumFractionDigits: 0 });
-                        } else if (col.field === 'glosaOperacion') {
-                            if (row['glosaOperacion'] === 'COMPRA AF IVA') {
+                        } else if (col.field === 'tipoOperacion') {
+                            if (row['tipoOperacion'] === '2') {
                                 // Revisar si es Nota de Crédito y cambiar el signo
                                 if (row['tipoDocumento'] === 'NOTA CREDITO') {
+                                    // Acumular los valores negativos
+                                    ingresosTotalesK += Number(row['montoTotal']);
+                                    ingresosTotalesL += Number(row['montoNeto']);
                                     // Cambiar los valores a negativos
                                     row['montoTotal'] = -Math.abs(Number(row['montoTotal']));
                                     row['montoNeto'] = -Math.abs(Number(row['montoNeto']));
 
-                                    // Acumular los valores negativos
-                                    ingresosTotalesK += row['montoTotal'];
-                                    ingresosTotalesL += row['montoNeto'];
                                 } else {
                                     // Acumular montos en egresos
                                     egresosTotalesK += Number(row['montoTotal']);
                                     egresosTotalesL += Number(row['montoNeto']);
                                 }
-                            } else if (row['glosaOperacion'] === 'VENTA AF IVA') {
-                                // Acumular montos en ingresos
-                                ingresosTotalesK += Number(row['montoTotal']);
-                                ingresosTotalesL += Number(row['montoNeto']);
+                            } else if (row['tipoOperacion'] === '1') {
+                                if (row['tipoDocumento'] === 'NOTA CREDITO') {
+                                    // Acumular los valores negativos
+                                    egresosTotalesK += Number(row['montoTotal']);
+                                    egresosTotalesL += Number(row['montoNeto']);
+                                    row['montoTotal'] = -Math.abs(Number(row['montoTotal']));
+                                    row['montoNeto'] = -Math.abs(Number(row['montoNeto']));
+
+                                } else {
+                                    // Acumular montos en ingresos
+                                    ingresosTotalesK += Number(row['montoTotal']);
+                                    ingresosTotalesL += Number(row['montoNeto']);
+                                }
                             }
-                            return row['glosaOperacion'];
+                            return row['tipoOperacion'];
                         }
                         // Correlativo o cualquier otro campo
                         return col.field === 'correlativo' ? rowIndex + 2 : row[col.field];
@@ -569,6 +578,18 @@ const Combined = ({ combinedData }) => {
                     theme: 'TableStyleMedium2',
                     showRowStripes: true,
                 }
+            });
+
+            // Aplicar formato a toda la columna K
+            const colK = worksheet.getColumn('K');
+            colK.eachCell((cell) => {
+                cell.numFmt = '#,##0';
+            });
+
+            // Aplicar formato a toda la columna L
+            const colL = worksheet.getColumn('L');
+            colL.eachCell((cell) => {
+                cell.numFmt = '#,##0';
             });
 
 
@@ -611,7 +632,7 @@ const Combined = ({ combinedData }) => {
 
 
             }
-        );
+            );
 
             //Aqui comienza todo lo relacionado a el formato y a la segunda tabla, posterior al final de la primera tabla desde ending table en su posicion i
 
@@ -623,11 +644,11 @@ const Combined = ({ combinedData }) => {
             worksheet.getCell(`I${startRow + endingTablei}`).border = { bottom: borderStyleOutside }
 
             for (let i = 0; i < columnsToFormat.length; i++) {
-                worksheet.getCell(`${columnsToFormat[i]}${startRow + endingTablei}`).border = { bottom: borderStyleOutside }
+                worksheet.getCell(`${columnsToFormat[i]}${startRow + endingTablei}`).border = { bottom: borderStyleOutside, left: borderStyle, right: borderStyle }
             }
 
-            worksheet.getCell(`C${startRow + endingTablei}`).border = { left: borderStyleOutside, bottom: borderStyleOutside }
-            worksheet.getCell(`L${startRow + endingTablei}`).border = { right: borderStyleOutside, bottom: borderStyleOutside }
+            worksheet.getCell(`C${startRow + endingTablei}`).border = { left: borderStyleOutside, bottom: borderStyleOutside, top: borderStyle, right: borderStyle }
+            worksheet.getCell(`L${startRow + endingTablei}`).border = { right: borderStyleOutside, bottom: borderStyleOutside, top: borderStyle, left: borderStyle }
             //-----------------------------------------------------------------------------------------
             //-----------------------------------------------------------------------------------------
             //-----------------------------------------------------------------------------------------
@@ -686,7 +707,7 @@ const Combined = ({ combinedData }) => {
             };
             worksheet.getCell(`D${table2begining + 3}`).value = egresosTotalesK;
             worksheet.getCell(`D${table2begining + 3}`).numFmt = '#,##0';
-            
+
             //valor columna E
             worksheet.getCell(`E${table2begining + 2}`).value = 'SALDO FLUJO DE CAJA';
             worksheet.getCell(`E${table2begining + 2}`).border = {
@@ -695,8 +716,10 @@ const Combined = ({ combinedData }) => {
             };
             worksheet.getCell(`E${table2begining + 3}`).value = ingresosTotalesK - egresosTotalesK + saldoInicial;
             worksheet.getCell(`E${table2begining + 3}`).numFmt = '#,##0';
+            console.log(ingresosTotalesK - egresosTotalesK + saldoInicial);
 
-            
+
+
             //valor columna F
             worksheet.getCell(`F${table2begining + 2}`).value = 'INGRESOS';
             worksheet.getCell(`F${table2begining + 2}`).border = {
@@ -705,7 +728,7 @@ const Combined = ({ combinedData }) => {
             worksheet.getCell(`F${table2begining + 3}`).value = ingresosTotalesL;
             worksheet.getCell(`F${table2begining + 3}`).numFmt = '#,##0';
 
-            
+
             //valor columna G
             worksheet.getCell(`G${table2begining + 2}`).value = 'EGRESOS';
             worksheet.getCell(`G${table2begining + 2}`).border = {
@@ -713,7 +736,7 @@ const Combined = ({ combinedData }) => {
             };
             worksheet.getCell(`G${table2begining + 3}`).value = egresosTotalesL;
             worksheet.getCell(`G${table2begining + 3}`).numFmt = '#,##0';
-            
+
             //valor columna H
             worksheet.getCell(`H${table2begining + 2}`).value = 'RESULTADO NETO';
             worksheet.getCell(`H${table2begining + 2}`).border = {
@@ -722,10 +745,10 @@ const Combined = ({ combinedData }) => {
             worksheet.getCell(`H${table2begining + 3}`).value = ingresosTotalesL - egresosTotalesL;
             worksheet.getCell(`H${table2begining + 3}`).numFmt = '#,##0';
 
-            
-            
 
-            
+
+
+
 
 
             worksheet.getRow(table2begining + 2).height = 60;
@@ -733,7 +756,7 @@ const Combined = ({ combinedData }) => {
 
 
             for (let i = 0; i <= columnsToFormat.length - 3; i++) {
-                console.log(`${columnsToFormat[i]}${table2begining + 3}`);
+                // console.log(`${columnsToFormat[i]}${table2begining + 3}`);
 
                 worksheet.getCell(`${columnsToFormat[i]}${table2begining + 3}`).border = {
                     top: borderStyle,
@@ -820,38 +843,76 @@ const Combined = ({ combinedData }) => {
         // console.dir(saldoFebrero, { depth: null });
 
         // const saldoFebrero = { formula: '=BUSCAR(2,1/(Enero!R:R<>""),Enero!R:R)' };    
-        const saldoFebrero = { formula: '=LOOKUP(2,1/(Enero!E:E<>""),Enero!E:E)' };
+        async function getLastNumericValueFromColumnE(workbook, sheetName) {
+            const worksheet = workbook.getWorksheet(sheetName);
+            const columnE = worksheet.getColumn('E');
+            let lastNumericValue = 0;
 
+            // Iterar desde la última fila hacia arriba
+            for (let i = columnE.values.length; i >= 1; i--) {
+                // Usar worksheet.getCell() en lugar de columnE.getCell()
+                const cell = worksheet.getCell(`E${i}`);
+                const cellValue = cell.value;
+
+                // Verificar si el valor es numérico
+                if (typeof cellValue === 'number') {
+                    lastNumericValue = cellValue;
+                    break;  // Usar break en lugar de return para salir del bucle
+                }
+
+                // También verificar si es un string que puede convertirse a número
+                if (typeof cellValue === 'string' && !isNaN(parseFloat(cellValue))) {
+                    lastNumericValue = parseFloat(cellValue);
+                    break;  // Usar break en lugar de return para salir del bucle
+                }
+            }
+
+            return lastNumericValue;
+        }
+
+        let lastValue = await getLastNumericValueFromColumnE(workbook, 'Enero');
+        const saldoFebrero = lastValue;
         applyFormating(worksheet2, febreroSetRows, saldoFebrero, 1, mesesExcel[1]);
 
-        const saldoMarzo = { formula: '=LOOKUP(2,1/(Febrero!E:E<>""),Febrero!E:E)' };
+
+        lastValue = await getLastNumericValueFromColumnE(workbook, 'Febrero');
+        const saldoMarzo = lastValue;
         applyFormating(worksheet3, marzoSetRows, saldoMarzo, 2, mesesExcel[2]);
 
-        const saldoAbril = { formula: '=LOOKUP(2,1/(Marzo!E:E<>""),Marzo!E:E)' };
+        lastValue = await getLastNumericValueFromColumnE(workbook, 'Marzo');
+        const saldoAbril = lastValue;
         applyFormating(worksheet4, abrilSetRows, saldoAbril, 3, mesesExcel[3]);
 
-        const saldoMayo = { formula: '=LOOKUP(2,1/(Abril!E:E<>""),Abril!E:E)' };
+        lastValue = await getLastNumericValueFromColumnE(workbook, 'Abril');
+        const saldoMayo = lastValue;
         applyFormating(worksheet5, mayoSetRows, saldoMayo, 4, mesesExcel[4]);
 
-        const saldoJunio = { formula: '=LOOKUP(2,1/(Mayo!E:E<>""),Mayo!E:E)' };
+        lastValue = await getLastNumericValueFromColumnE(workbook, 'Mayo');
+        const saldoJunio = lastValue;
         applyFormating(worksheet6, junioSetRows, saldoJunio, 5, mesesExcel[5]);
 
-        const saldoJulio = { formula: '=LOOKUP(2,1/(Junio!E:E<>""),Junio!E:E)' };
+        lastValue = await getLastNumericValueFromColumnE(workbook, 'Junio');
+        const saldoJulio = lastValue;
         applyFormating(worksheet7, julioSetRows, saldoJulio, 6, mesesExcel[6]);
 
-        const saldoAgosto = { formula: '=LOOKUP(2,1/(Julio!E:E<>""),Julio!E:E)' };
+        lastValue = await getLastNumericValueFromColumnE(workbook, 'Julio');
+        const saldoAgosto = lastValue;
         applyFormating(worksheet8, agostoSetRows, saldoAgosto, 7, mesesExcel[7]);
 
-        const saldoSeptiembre = { formula: '=LOOKUP(2,1/(Agosto!E:E<>""),Agosto!E:E)' };
+        lastValue = await getLastNumericValueFromColumnE(workbook, 'Agosto');
+        const saldoSeptiembre = lastValue;
         applyFormating(worksheet9, septiembreSetRows, saldoSeptiembre, 8, mesesExcel[8]);
 
-        const saldoOctubre = { formula: '=LOOKUP(2,1/(Septiembre!E:E<>""),Septiembre!E:E)' };
+        lastValue = await getLastNumericValueFromColumnE(workbook, 'Septiembre');
+        const saldoOctubre = lastValue;
         applyFormating(worksheet10, octubreSetRows, saldoOctubre, 9, mesesExcel[9]);
 
-        const saldoNoviembre = { formula: '=LOOKUP(2,1/(Octubre!E:E<>""),Octubre!E:E)' };
+        lastValue = await getLastNumericValueFromColumnE(workbook, 'Octubre');
+        const saldoNoviembre = lastValue;
         applyFormating(worksheet11, noviembreSetRows, saldoNoviembre, 10, mesesExcel[10]);
 
-        const saldoDiciembre = { formula: '=LOOKUP(2,1/(Noviembre!E:E<>""),Noviembre!E:E)' };
+        lastValue = await getLastNumericValueFromColumnE(workbook, 'Noviembre');
+        const saldoDiciembre = lastValue;
         applyFormating(worksheet12, diciembreSetRows, saldoDiciembre, 11, mesesExcel[11]);
 
         const planillas = [worksheet1, worksheet2, worksheet3, worksheet4, worksheet5, worksheet6, worksheet7, worksheet8, worksheet9, worksheet10, worksheet11, worksheet12];

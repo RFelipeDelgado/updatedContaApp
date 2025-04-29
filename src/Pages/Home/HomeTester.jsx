@@ -55,6 +55,7 @@ const HomeTester = ({ setFilesData, setRegularInputs }) => {
 
     const handleProcessFiles = async () => {
         if (!file1 || !file2 || !file3 || !file4 || !file5 || !file6 || !file7 || !file8 || !file9 || !file10 || !file11 || !file12) {
+            console.log('Tienes que agregar todos los archivos, stupid');
             alert('Tienes que agregar todos los archivos, stupid');
             return;
         }
